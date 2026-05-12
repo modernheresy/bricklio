@@ -65,17 +65,14 @@
     .sym-l { left: 13px; }
     .sym-r { right: 13px; }
 
-    /* Animated number pop */
     @keyframes numPop {
       0%   { transform: translateY(6px); opacity: 0; }
       100% { transform: translateY(0);   opacity: 1; }
     }
     .num-pop { animation: numPop .22s cubic-bezier(.22,1,.36,1) both; }
 
-    /* Yield bar */
     .ybar-fill { transition: width .55s cubic-bezier(.4,0,.2,1), background .4s; }
 
-    /* Cashflow number */
     .cf-num {
       font-family: 'Cormorant', serif;
       font-size: clamp(54px, 14vw, 72px);
@@ -85,11 +82,9 @@
       transition: color .35s;
     }
 
-    /* Section divider */
     .sec-rule { border-top: 1px solid rgba(255,255,255,.1); }
     .sec-rule-light { border-top: 1px solid #E5E0D6; }
 
-    /* Stamp duty box */
     .sdlt-box {
       background: #F0EDE5;
       border: 1.5px solid #DDD8CF;
@@ -101,7 +96,6 @@
       gap: 12px;
     }
 
-    /* Custom checkbox */
     .ck-wrap { display: flex; align-items: center; gap-6px; cursor: pointer; }
     .ck-box {
       width: 18px; height: 18px; flex-shrink: 0;
@@ -110,24 +104,18 @@
       display: flex; align-items: center; justify-content: center;
       transition: all .15s;
     }
-    #sdltCheck:checked ~ .sdlt-box .ck-box,
-    .ck-checked { background: #1A3828; border-color: #1A3828; }
     #sdltCheck { display: none; }
 
-    /* ─── Modal ─────────────────────────────────────────────────────────────── */
     .modal-backdrop {
       position: fixed; inset: 0;
       background: rgba(26,26,26,.55);
       backdrop-filter: blur(3px);
       z-index: 50;
       display: flex; align-items: flex-end; justify-content: center;
-      padding-bottom: 0;
       opacity: 0; pointer-events: none;
       transition: opacity .25s;
     }
-    .modal-backdrop.open {
-      opacity: 1; pointer-events: all;
-    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
     .modal-sheet {
       background: #fff;
       border-radius: 20px 20px 0 0;
@@ -136,22 +124,16 @@
       transform: translateY(100%);
       transition: transform .35s cubic-bezier(.32,1,.56,1);
     }
-    .modal-backdrop.open .modal-sheet {
-      transform: translateY(0);
-    }
+    .modal-backdrop.open .modal-sheet { transform: translateY(0); }
 
-    /* Modal drag handle */
     .modal-handle {
       width: 36px; height: 4px;
       background: #E5E0D6; border-radius: 99px;
       margin: 0 auto 20px;
     }
 
-    /* Modal panels — only one visible at a time */
     .modal-panel { display: none; }
     .modal-panel.active { display: block; }
-
-    /* Save button states */
     #saveBtn.loading { opacity: .6; pointer-events: none; }
   </style>
 </head>
@@ -164,11 +146,8 @@
     <div class="font-display font-semibold text-[30px] leading-none text-brand tracking-tight">
       Yield<span class="text-gold">Kit</span>
     </div>
-    <!-- Auth state — swaps between login prompt and user info -->
     <div id="authArea">
-      <!-- Shown when logged out -->
       <div id="authGuest" class="text-[11px] text-stone-400 tracking-wide">UK property deal analyser</div>
-      <!-- Shown when logged in — hidden by default -->
       <div id="authUser" class="hidden flex items-center gap-2.5">
         <div class="text-right">
           <div class="text-[11px] font-medium text-brand" id="authEmail"></div>
@@ -181,28 +160,22 @@
 
   <!-- ─── Result Card ─── -->
   <div class="relative rounded-2xl bg-brand overflow-hidden px-6 pt-6 pb-5 transition-all duration-500" id="card">
-
-    <!-- decorative rings -->
     <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full border border-white/5 pointer-events-none"></div>
     <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full border border-white/5 pointer-events-none"></div>
     <div class="absolute -bottom-10 left-16 w-32 h-32 rounded-full bg-white/[.025] pointer-events-none"></div>
 
-    <!-- Verdict pill -->
     <div id="verdict" class="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-[1.8px] uppercase mb-3 transition-colors duration-300 text-gold">
       ENTER DETAILS BELOW
     </div>
 
-    <!-- Big cashflow -->
     <div class="cf-num text-white/50" id="cfNum">£—</div>
     <div class="flex items-center gap-2 mt-1 flex-wrap">
       <div class="text-[11px] text-white/35 tracking-wide">pre-tax monthly cashflow</div>
       <div class="text-[10px] text-gold/60 tracking-wide cursor-pointer hover:text-gold/90 transition-colors">After-tax with Pro ›</div>
     </div>
 
-    <!-- Breakdown pills -->
     <div class="flex flex-wrap gap-1.5 mt-4" id="pills"></div>
 
-    <!-- Yield strength bar -->
     <div id="ybarWrap" class="mt-5 hidden">
       <div class="flex justify-between text-[9px] tracking-wide mb-1.5 text-white/30 uppercase">
         <span>Weak</span><span>Average</span><span>Good</span><span>Excellent</span>
@@ -213,8 +186,7 @@
       <div class="text-[11px] mt-1.5 font-medium transition-colors" id="yRating" style="color:rgba(255,255,255,.4)"></div>
     </div>
 
-    <!-- Meta row -->
-    <div class="grid grid-cols-3 mt-5 pt-5 sec-rule" id="metaRow">
+    <div class="grid grid-cols-3 mt-5 pt-5 sec-rule">
       <div>
         <div class="text-sm font-semibold text-white" id="mAnnual">—</div>
         <div class="text-[10px] mt-0.5 text-white/35">Annual</div>
@@ -233,10 +205,8 @@
   <!-- ─── Form Card ─── -->
   <div class="bg-white rounded-2xl border border-cream-dark px-5 pt-5 pb-6 shadow-sm">
 
-    <!-- Property section -->
     <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-3.5">Property</div>
 
-    <!-- Price -->
     <div class="mb-3">
       <label class="block text-xs font-medium text-stone-400 mb-1.5">Purchase price</label>
       <div class="relative has-pre">
@@ -245,7 +215,6 @@
       </div>
     </div>
 
-    <!-- Deposit + Rate -->
     <div class="grid grid-cols-2 gap-2.5 mb-3">
       <div>
         <label class="block text-xs font-medium text-stone-400 mb-1.5">Deposit</label>
@@ -263,7 +232,6 @@
       </div>
     </div>
 
-    <!-- Mortgage type -->
     <div class="mb-4">
       <label class="block text-xs font-medium text-stone-400 mb-1.5">Mortgage type</label>
       <div class="grid grid-cols-2 gap-2">
@@ -278,12 +246,10 @@
       </div>
     </div>
 
-    <!-- Divider -->
     <div class="sec-rule-light my-4"></div>
 
-    <!-- Stamp Duty -->
     <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-3.5">Stamp Duty (BTL)</div>
-    <div class="sdlt-box mb-4" id="sdltBox">
+    <div class="sdlt-box mb-4">
       <div>
         <div class="text-[11px] text-stone-400 mb-0.5">Calculated automatically</div>
         <div class="text-[15px] font-semibold text-ink" id="sdltAmt">Enter price above</div>
@@ -302,7 +268,6 @@
     <div class="sec-rule-light my-4"></div>
     <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-3.5">Income & Costs</div>
 
-    <!-- Rent -->
     <div class="mb-3">
       <label class="block text-xs font-medium text-stone-400 mb-1.5">Monthly rent</label>
       <div class="relative has-pre">
@@ -311,7 +276,6 @@
       </div>
     </div>
 
-    <!-- Agent + Void -->
     <div class="grid grid-cols-2 gap-2.5 mb-3">
       <div>
         <label class="block text-xs font-medium text-stone-400 mb-1.5">Agent fee</label>
@@ -329,7 +293,6 @@
       </div>
     </div>
 
-    <!-- Other costs -->
     <div class="mb-1">
       <label class="block text-xs font-medium text-stone-400 mb-1.5">Other monthly costs</label>
       <div class="relative has-pre">
@@ -341,7 +304,6 @@
       </div>
     </div>
 
-    <!-- CTAs — Analyse + Save -->
     <div class="grid grid-cols-2 gap-2.5 mt-5">
       <button onclick="calc()"
         class="h-[50px] rounded-[10px] bg-brand text-white text-[14px] font-semibold tracking-wide hover:bg-brand-mid active:scale-[.99] transition-all duration-150">
@@ -363,13 +325,12 @@
   <div class="modal-sheet">
     <div class="modal-handle"></div>
 
-    <!-- Panel 1: Login / request magic link -->
+    <!-- Panel 1: Login -->
     <div class="modal-panel active" id="panelLogin">
       <div class="font-display text-[26px] font-semibold text-brand leading-tight mb-1">Save this deal</div>
       <p class="text-[13px] text-stone-400 mb-5 leading-relaxed">Enter your email and we'll send you a login link. No password needed.</p>
-      <div class="relative has-pre mb-3">
-        <span class="sym sym-l" style="left:13px">✉</span>
-        <input type="email" id="loginEmail" class="field-input" style="padding-left:34px" placeholder="you@example.com"
+      <div class="relative mb-3" style="padding-left:0">
+        <input type="email" id="loginEmail" class="field-input" placeholder="you@example.com"
           onkeydown="if(event.key==='Enter') sendMagicLink()">
       </div>
       <div class="text-[11px] text-red-400 mb-3 hidden" id="loginError"></div>
@@ -382,23 +343,20 @@
       </div>
     </div>
 
-    <!-- Panel 2: Email sent confirmation -->
+    <!-- Panel 2: Email sent -->
     <div class="modal-panel" id="panelSent">
       <div class="text-center py-4">
         <div class="text-4xl mb-4">✉️</div>
         <div class="font-display text-[24px] font-semibold text-brand mb-2">Check your inbox</div>
         <p class="text-[13px] text-stone-400 leading-relaxed mb-5">
           We've sent a login link to <span id="sentEmail" class="font-medium text-ink"></span>.<br>
-          It expires in 15 minutes.
+          Click it and your deal will be saved automatically.
         </p>
-        <button onclick="closeModal()"
-          class="text-[12px] text-stone-300 hover:text-stone-500 transition-colors">
-          Close
-        </button>
+        <button onclick="closeModal()" class="text-[12px] text-stone-300 hover:text-stone-500 transition-colors">Close</button>
       </div>
     </div>
 
-    <!-- Panel 3: Pro wall (free limit reached) -->
+    <!-- Panel 3: Pro wall -->
     <div class="modal-panel" id="panelPro">
       <div class="font-display text-[26px] font-semibold text-brand leading-tight mb-1">Upgrade to Pro</div>
       <p class="text-[13px] text-stone-400 mb-5 leading-relaxed">
@@ -419,17 +377,14 @@
       </button>
     </div>
 
-    <!-- Panel 4: Deal saved confirmation -->
+    <!-- Panel 4: Deal saved -->
     <div class="modal-panel" id="panelSaved">
       <div class="text-center py-4">
         <div class="text-4xl mb-4">✅</div>
         <div class="font-display text-[24px] font-semibold text-brand mb-2">Deal saved</div>
         <p class="text-[13px] text-stone-400 leading-relaxed mb-2" id="savedMsg"></p>
         <p class="text-[11px] text-stone-300 mb-5" id="savedCount"></p>
-        <button onclick="closeModal()"
-          class="text-[12px] text-stone-300 hover:text-stone-500 transition-colors">
-          Close
-        </button>
+        <button onclick="closeModal()" class="text-[12px] text-stone-300 hover:text-stone-500 transition-colors">Close</button>
       </div>
     </div>
 
@@ -441,46 +396,100 @@
   const $ = id => document.getElementById(id);
   const AUTH = 'https://yieldkit-auth.richieconnor.workers.dev';
 
-  // ─── App state ─────────────────────────────────────────────────────────────
-  let currentUser = null;   // { id, email, plan } or null
-  let lastCalc    = null;   // last calc() result — what gets saved
+  let currentUser = null;
+  let lastCalc    = null;
 
   const fmt = n => {
     const abs = '£' + Math.abs(Math.round(n)).toLocaleString('en-GB');
     return n < 0 ? '−' + abs : abs;
   };
 
-  // ─── Auth init ─────────────────────────────────────────────────────────────
-  // Called on page load. Checks if the user has a valid session cookie.
-  // Also handles the ?login=success redirect from the magic link.
-  async function initAuth() {
-    // If we just came back from a magic link click, clean the URL quietly
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('login')) {
-      history.replaceState({}, '', '/');
-    }
-    if (params.get('error')) {
-      // Token expired / used — show a gentle message
-      showLoginError(friendlyTokenError(params.get('error')));
-      history.replaceState({}, '', '/');
-    }
+  // ─── Pending deal persistence ───────────────────────────────────────────────
+  // Saves form state + calc result to localStorage before the magic link
+  // redirect. Restored on the way back in so the deal saves automatically.
 
-    try {
-      const res  = await fetch(`${AUTH}/api/auth/me`, { credentials: 'include' });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-        // If we just logged in, auto-trigger save
-        if (params.get('login') === 'success' && lastCalc) {
-          saveDeal();
-        }
+  function savePendingDeal() {
+    if (!lastCalc) return;
+    localStorage.setItem('yk_pending', JSON.stringify({
+      calc: lastCalc,
+      fields: {
+        price:   $('price').value,
+        deposit: $('deposit').value,
+        rate:    $('rate').value,
+        rent:    $('rent').value,
+        agent:   $('agent').value,
+        void:    $('void').value,
+        costs:   $('costs').value,
+        mtype:   document.querySelector('input[name="mtype"]:checked').value,
+        addSDLT: $('sdltCheck').checked,
       }
+    }));
+  }
+
+  function restorePendingDeal() {
+    try {
+      const raw = localStorage.getItem('yk_pending');
+      if (!raw) return false;
+      const { calc, fields } = JSON.parse(raw);
+
+      $('price').value   = fields.price;
+      $('deposit').value = fields.deposit;
+      $('rate').value    = fields.rate;
+      $('rent').value    = fields.rent;
+      $('agent').value   = fields.agent;
+      $('void').value    = fields.void;
+      $('costs').value   = fields.costs;
+
+      const radio = document.querySelector(`input[name="mtype"][value="${fields.mtype}"]`);
+      if (radio) radio.checked = true;
+
+      $('sdltCheck').checked       = fields.addSDLT;
+      $('ckBox').style.background  = fields.addSDLT ? '#1A3828' : '#fff';
+      $('ckBox').style.borderColor = fields.addSDLT ? '#1A3828' : '#C4BEB4';
+      $('ckTick').style.display    = fields.addSDLT ? 'block'   : 'none';
+
+      lastCalc = calc;  // restore directly so save works immediately
+      calc();           // update the UI
+      return true;
     } catch (e) {
-      // No session — stay as guest, no error needed
+      return false;
     }
   }
 
-  // Update the header auth area
+  function clearPendingDeal() {
+    localStorage.removeItem('yk_pending');
+  }
+
+  // ─── Auth init ─────────────────────────────────────────────────────────────
+  async function initAuth() {
+    const params       = new URLSearchParams(window.location.search);
+    const justLoggedIn = params.get('login') === 'success';
+
+    if (params.has('login') || params.has('error')) {
+      history.replaceState({}, '', '/');
+    }
+    if (params.get('error')) {
+      showLoginError(friendlyTokenError(params.get('error')));
+    }
+
+    // Restore form before checking session so lastCalc is ready to save
+    if (justLoggedIn) restorePendingDeal();
+
+    try {
+      const res = await fetch(`${AUTH}/api/auth/me`, { credentials: 'include' });
+      if (res.ok) {
+        const { user } = await res.json();
+        setUser(user);
+        if (justLoggedIn && lastCalc) {
+          await saveDeal();
+          clearPendingDeal();
+        }
+      }
+    } catch (e) {
+      // No session — guest mode
+    }
+  }
+
   function setUser(user) {
     currentUser = user;
     if (user) {
@@ -496,47 +505,25 @@
   }
 
   // ─── Save flow ─────────────────────────────────────────────────────────────
-  // Called when "Save Deal" is clicked
   async function initSave() {
-    if (!lastCalc) {
-      // Nothing calculated yet — nudge them
-      $('price').focus();
-      return;
-    }
-
-    if (!currentUser) {
-      // Not logged in — show login modal
-      showPanel('panelLogin');
-      openModal();
-      return;
-    }
-
-    // Logged in — check deal count against plan limit
+    if (!lastCalc) { $('price').focus(); return; }
+    if (!currentUser) { showPanel('panelLogin'); openModal(); return; }
     await saveDeal();
   }
 
-  // Actually saves the deal to D1 via the Worker
   async function saveDeal() {
     if (!currentUser || !lastCalc) return;
 
-    // Check existing deal count
     let dealCount = 0;
     try {
-      const res  = await fetch(`${AUTH}/api/deals`, { credentials: 'include' });
-      if (res.ok) {
-        const data = await res.json();
-        dealCount = data.count || 0;
-      }
-    } catch (e) { /* treat as 0 */ }
+      const res = await fetch(`${AUTH}/api/deals`, { credentials: 'include' });
+      if (res.ok) dealCount = (await res.json()).count || 0;
+    } catch (e) {}
 
-    // Free plan limit
     if (dealCount >= 3 && currentUser.plan !== 'pro') {
-      showPanel('panelPro');
-      openModal();
-      return;
+      showPanel('panelPro'); openModal(); return;
     }
 
-    // Save it
     $('saveBtn').classList.add('loading');
     $('saveBtn').textContent = 'Saving…';
 
@@ -551,7 +538,7 @@
 
       if (res.ok) {
         const newCount = dealCount + 1;
-        $('savedMsg').textContent  = `"${label}" has been saved to your account.`;
+        $('savedMsg').textContent   = `"${label}" has been saved to your account.`;
         $('savedCount').textContent = currentUser.plan === 'pro'
           ? `${newCount} deal${newCount !== 1 ? 's' : ''} saved`
           : `${newCount} of 3 free saves used`;
@@ -573,8 +560,10 @@
     const email = $('loginEmail').value.trim();
     if (!email) { showLoginError('Please enter your email.'); return; }
 
-    $('loginBtn').textContent    = 'Sending…';
-    $('loginBtn').style.opacity  = '.6';
+    savePendingDeal(); // persist before leaving
+
+    $('loginBtn').textContent         = 'Sending…';
+    $('loginBtn').style.opacity       = '.6';
     $('loginBtn').style.pointerEvents = 'none';
     $('loginError').classList.add('hidden');
 
@@ -596,8 +585,8 @@
     } catch (e) {
       showLoginError('Could not connect. Please try again.');
     } finally {
-      $('loginBtn').textContent = 'Send login link';
-      $('loginBtn').style.opacity = '1';
+      $('loginBtn').textContent         = 'Send login link';
+      $('loginBtn').style.opacity       = '1';
       $('loginBtn').style.pointerEvents = 'auto';
     }
   }
@@ -612,16 +601,13 @@
   function openModal()  { $('modal').classList.add('open'); }
   function closeModal() {
     $('modal').classList.remove('open');
-    // Reset login panel after close
     setTimeout(() => {
       showPanel('panelLogin');
       $('loginEmail').value = '';
       $('loginError').classList.add('hidden');
     }, 350);
   }
-  function closeModalOnBackdrop(e) {
-    if (e.target === $('modal')) closeModal();
-  }
+  function closeModalOnBackdrop(e) { if (e.target === $('modal')) closeModal(); }
   function showPanel(id) {
     document.querySelectorAll('.modal-panel').forEach(p => p.classList.remove('active'));
     $(id).classList.add('active');
@@ -636,7 +622,6 @@
     return 'Invalid login link — please try again.';
   }
 
-  // Build a readable label from calculator inputs e.g. "£250k · 6.2% yield"
   function buildDealLabel() {
     const price = +$('price').value || 0;
     const net   = lastCalc ? lastCalc.net : 0;
@@ -690,7 +675,6 @@
 
     const sdlt = calcSDLT(price);
     $('sdltAmt').textContent = price ? fmt(sdlt) + ' due on completion' : 'Enter price above';
-
     if (!price || !rent) return;
 
     const depositAmt = price * deposit / 100;
@@ -703,15 +687,13 @@
 
     const agentAmt  = rent * agent / 100;
     const voidAmt   = rent * voidWks / 52;
-    const totalCost = mtg + agentAmt + voidAmt + costs;
-    const monthly   = rent - totalCost;
+    const monthly   = rent - (mtg + agentAmt + voidAmt + costs);
     const annual    = monthly * 12;
     const gross     = rent * 12 / price * 100;
     const net       = (rent*12 - (agentAmt+voidAmt+costs)*12) / price * 100;
     const cashIn    = depositAmt + (addSDLT ? 0 : sdlt);
     const pos       = monthly >= 0;
 
-    // Store result for saving
     lastCalc = { price, deposit, rate, rent, agent, voidWks, costs, type, addSDLT,
                  mtg, monthly, annual, gross, net, cashIn, sdlt, loan };
 
@@ -750,7 +732,6 @@
     $('sdltAmt').textContent = p ? fmt(calcSDLT(p)) + ' due on completion' : 'Enter price above';
   });
 
-  // Boot
   initAuth();
 </script>
 </body>

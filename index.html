@@ -435,7 +435,7 @@
 
 <script>
   const $ = id => document.getElementById(id);
-  const AUTH = 'https://bricklio-auth.richieconnor.workers.dev';
+  const AUTH = '';
 
   let currentUser = null;
   let lastCalc    = null;
@@ -503,53 +503,28 @@
 
   // ─── Auth init ─────────────────────────────────────────────────────────────
   async function initAuth() {
-    const params    = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session');
-    const errorCode = params.get('error');
+    const params       = new URLSearchParams(window.location.search);
+    const justLoggedIn = params.get('login') === 'success';
 
-    // Clean the URL immediately
-    if (params.has('session') || params.has('error')) {
+    if (params.has('login') || params.has('error')) {
       history.replaceState({}, '', '/');
     }
-
-    if (errorCode) {
-      showLoginError(friendlyTokenError(errorCode));
-      openModal();
-      return;
+    if (params.get('error')) {
+      showLoginError(friendlyTokenError(params.get('error')));
     }
 
-    // Magic-link return: activate the session via a direct fetch so the
-    // browser stores the cookie (cookies on cross-site redirects are dropped)
-    if (sessionId) {
-      restorePendingDeal(); // restore form so lastCalc is ready
+    // Restore form before checking session so lastCalc is ready to save
+    if (justLoggedIn) restorePendingDeal();
 
-      try {
-        const res = await fetch(`${AUTH}/api/auth/activate`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session: sessionId }),
-        });
-        if (res.ok) {
-          const { user } = await res.json();
-          setUser(user);
-          if (lastCalc) {
-            await saveDeal();
-            clearPendingDeal();
-          }
-        }
-      } catch (e) {
-        // activation failed — guest mode
-      }
-      return;
-    }
-
-    // Normal page load — check for existing session
     try {
       const res = await fetch(`${AUTH}/api/auth/me`, { credentials: 'include' });
       if (res.ok) {
         const { user } = await res.json();
         setUser(user);
+        if (justLoggedIn && lastCalc) {
+          await saveDeal();
+          clearPendingDeal();
+        }
       }
     } catch (e) {
       // No session — guest mode

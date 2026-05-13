@@ -156,6 +156,40 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .deal-card { animation: dealIn .2s ease both; }
+
+    /* ── Section 24 toggle ── */
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+    .s24-track {
+      width: 44px; height: 24px;
+      background: #F4F1EA;
+      border: 1.5px solid #DDD8CF;
+      border-radius: 99px;
+      position: relative;
+      transition: background .2s, border-color .2s;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .s24-track.on { background: #1A3828; border-color: #1A3828; }
+    .s24-knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #C4BEB4;
+      transition: transform .2s, background .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    }
+    .s24-track.on .s24-knob { transform: translateX(20px); background: #fff; }
+
+    /* ── S24 after-tax on result card ── */
+    .s24-after-num {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(26px, 7vw, 32px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.5px;
+      transition: color .3s;
+    }
   </style>
 </head>
 
@@ -211,6 +245,37 @@
     <div class="cf-num text-white/50" id="cfNum">£—</div>
     <div class="flex items-center gap-2 mt-1 flex-wrap">
       <div class="text-[11px] text-white/35 tracking-wide">pre-tax monthly cashflow</div>
+    </div>
+
+    <!-- S24 pre-tax warning -->
+    <div id="s24Warning" class="hidden mt-2">
+      <a href="/section24.html" class="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-wide transition-colors" style="color:rgba(252,165,165,.7)">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.75" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M5.5 3v2.5M5.5 7.5v.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Pre-tax only — S24 may significantly reduce this
+      </a>
+    </div>
+
+    <!-- S24 after-tax result -->
+    <div id="s24Result" class="hidden mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,.1)">
+      <div class="flex items-end justify-between gap-3">
+        <div>
+          <div class="text-[9px] font-semibold tracking-[1.6px] uppercase mb-1.5" style="color:rgba(255,255,255,.3)">After S24 Tax</div>
+          <div class="s24-after-num" id="s24AfterNum" style="color:rgba(255,255,255,.4)">£—</div>
+          <div class="text-[10px] mt-0.5 tracking-wide" style="color:rgba(255,255,255,.22)">monthly after tax</div>
+        </div>
+        <div class="text-right pb-0.5">
+          <div class="text-[9px] font-semibold tracking-[1.4px] uppercase mb-1" style="color:rgba(255,255,255,.22)">S24 Cost</div>
+          <div class="text-[14px] font-semibold" id="s24CostAmt" style="color:rgba(252,165,165,.6)">—</div>
+          <div class="text-[10px] mt-0.5" style="color:rgba(255,255,255,.2)">per month</div>
+        </div>
+      </div>
+      <div id="s24RangeNote" class="hidden mt-2 text-[9px] leading-relaxed" style="color:rgba(255,255,255,.2)">
+        ⚠ Estimated range based on income band —
+        <a href="/section24.html" class="underline" style="color:rgba(255,255,255,.3)">enter exact income</a> for a precise figure.
+      </div>
     </div>
 
     <div class="flex flex-wrap gap-1.5 mt-4" id="pills"></div>
@@ -343,6 +408,26 @@
       </div>
     </div>
 
+    <div class="sec-rule-light mt-5 mb-4"></div>
+
+    <!-- S24 toggle -->
+    <div class="flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2 mb-0.5">
+          <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400">Section 24</div>
+          <a href="/section24.html" id="s24EditLink"
+            class="hidden text-[10px] font-semibold text-brand/60 hover:text-brand transition-colors">
+            Edit profile →
+          </a>
+        </div>
+        <div class="text-[11px] text-stone-300 leading-relaxed">After-tax cashflow · account feature</div>
+      </div>
+      <div class="s24-track" id="s24Track" onclick="s24ToggleClick()">
+        <div class="s24-knob" id="s24Knob"></div>
+        <input type="checkbox" id="s24Checkbox" class="sr-only">
+      </div>
+    </div>
+
     <div class="grid grid-cols-2 gap-2.5 mt-5">
       <button onclick="calc()"
         class="h-[50px] rounded-[10px] bg-brand text-white text-[14px] font-semibold tracking-wide hover:bg-brand-mid active:scale-[.99] transition-all duration-150">
@@ -448,12 +533,15 @@
 </div>
 
 
+<script src="section24.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const AUTH = '';
 
-  let currentUser = null;
-  let lastCalc    = null;
+  let currentUser    = null;
+  let lastCalc       = null;
+  let userTaxProfile = null;
+  let s24Active      = false;
 
   const fmt = n => {
     const abs = '£' + Math.abs(Math.round(n)).toLocaleString('en-GB');
@@ -542,6 +630,9 @@
           await saveDeal(pendingLabel || buildDealLabel());
           clearPendingDeal();
         }
+        // Fetch tax profile and handle S24 return in parallel
+        await fetchTaxProfile();
+        checkS24Return();
       }
     } catch (e) {
       // No session — guest mode
@@ -557,7 +648,10 @@
     } else {
       $('authGuest').classList.remove('hidden');
       $('authUser').classList.add('hidden');
-      currentUser = null;
+      currentUser    = null;
+      userTaxProfile = null;
+      deactivateS24();
+      $('s24EditLink').classList.add('hidden');
     }
   }
 
@@ -751,7 +845,12 @@
     const pos       = monthly >= 0;
 
     lastCalc = { price, deposit, rate, rent, agent, voidWks, costs, type, addSDLT,
-                 mtg, monthly, annual, gross, net, cashIn, sdlt, loan };
+                 mtg, monthly, annual, gross, net, cashIn, sdlt, loan,
+                 monthlyInterest: loan * mr,
+                 monthlyCosts:    agentAmt + voidAmt + costs };
+
+    // Persist for S24 page
+    localStorage.setItem('bk_calc', JSON.stringify(lastCalc));
 
     const vEl = $('verdict');
     vEl.textContent = pos ? '✓ POSITIVE CASHFLOW' : '✗ NEGATIVE CASHFLOW';
@@ -780,6 +879,15 @@
     $('ybar').style.background = ym.col;
     $('yRating').style.color   = ym.col;
     $('yRating').textContent   = ym.label + ' · ' + net.toFixed(2) + '% net yield';
+
+    // S24 warning / live result
+    if (s24Active && userTaxProfile) {
+      $('s24Warning').classList.add('hidden');
+      updateS24Display();
+    } else {
+      $('s24Result').classList.add('hidden');
+      $('s24Warning').classList.remove('hidden');
+    }
   }
 
   document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
@@ -979,6 +1087,120 @@
       }
     } catch (e) {
       alert('Could not delete deal. Please try again.');
+    }
+  }
+
+  // ─── Section 24 ────────────────────────────────────────────────────────────
+
+  async function fetchTaxProfile() {
+    try {
+      const res = await fetch(`${AUTH}/api/user/profile`, { credentials: 'include' });
+      if (res.ok) {
+        const { profile } = await res.json();
+        userTaxProfile = profile;
+        // Show Edit link if profile exists
+        if (profile) {
+          $('s24EditLink').classList.remove('hidden');
+        }
+        // Restore active state if previously enabled
+        if (profile && localStorage.getItem('bk_s24_active') === '1') {
+          activateS24(/* silent */ true);
+        }
+      }
+    } catch (e) {}
+  }
+
+  function checkS24Return() {
+    const returning = localStorage.getItem('bk_s24_return');
+    if (!returning) return;
+    localStorage.removeItem('bk_s24_return');
+    if (userTaxProfile && lastCalc) {
+      activateS24();
+    }
+  }
+
+  function s24ToggleClick() {
+    if (!currentUser) {
+      // Not logged in → login modal
+      openModal();
+      showPanel('panelLogin');
+      return;
+    }
+    if (!userTaxProfile) {
+      // Logged in, no profile → go to S24 page
+      navigateToS24();
+      return;
+    }
+    // Has profile → toggle
+    if ($('s24Track').classList.contains('on')) {
+      deactivateS24();
+    } else {
+      activateS24();
+    }
+  }
+
+  function navigateToS24() {
+    if (lastCalc) localStorage.setItem('bk_calc', JSON.stringify(lastCalc));
+    window.location.href = '/section24.html';
+  }
+
+  function activateS24(silent = false) {
+    s24Active = true;
+    $('s24Track').classList.add('on');
+    $('s24Checkbox').checked = true;
+    localStorage.setItem('bk_s24_active', '1');
+    $('s24Warning').classList.add('hidden');
+    if (lastCalc) updateS24Display();
+  }
+
+  function deactivateS24() {
+    s24Active = false;
+    $('s24Track').classList.remove('on');
+    $('s24Checkbox').checked = false;
+    localStorage.removeItem('bk_s24_active');
+    $('s24Result').classList.add('hidden');
+    // Show warning again if a calc has run
+    if (lastCalc) $('s24Warning').classList.remove('hidden');
+  }
+
+  function updateS24Display() {
+    if (!s24Active || !lastCalc || !userTaxProfile) return;
+
+    const result = S24.calculate(userTaxProfile, lastCalc);
+    if (!result || result.notApplicable) {
+      $('s24Result').classList.add('hidden');
+      return;
+    }
+
+    $('s24Result').classList.remove('hidden');
+
+    const isRange  = result.isRange;
+    const fmt3 = n => {
+      const abs = '£' + Math.abs(Math.round(n)).toLocaleString('en-GB');
+      return n < 0 ? '−' + abs : abs;
+    };
+
+    // After-tax monthly (worst case for range, single for precise)
+    const afterMonthly = isRange ? result.afterTaxMonthlyLow : result.afterTaxMonthly;
+    const pos          = afterMonthly >= 0;
+    const col          = pos ? '#86efac' : '#fca5a5';
+
+    const afterEl = $('s24AfterNum');
+    afterEl.classList.remove('num-pop');
+    void afterEl.offsetWidth;
+    afterEl.classList.add('num-pop');
+    afterEl.textContent = fmt3(afterMonthly) + '/mo';
+    afterEl.style.color = col;
+
+    // S24 monthly cost
+    const monthlyCost = isRange ? result.worstCase.monthlyTax : result.monthlyTax;
+    $('s24CostAmt').textContent = '−£' + Math.round(monthlyCost).toLocaleString('en-GB') + '/mo';
+
+    // Range note
+    if (isRange) {
+      $('s24RangeNote').classList.remove('hidden');
+    } else {
+      $('s24RangeNote').classList.add('hidden');
     }
   }
 

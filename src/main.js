@@ -88,7 +88,8 @@ async function initAuth() {
     if (res.ok) {
       const { user } = await res.json()
       setUser(user)
-      if (justLoggedIn && lastCalc) {
+      const s24Pending = localStorage.getItem('bk_s24_pending')
+      if (justLoggedIn && lastCalc && !s24Pending) {
         await saveDeal(pendingLabel || buildDealLabel())
         clearPendingDeal()
       }
@@ -581,6 +582,7 @@ function checkS24Pending() {
   const pending = localStorage.getItem('bk_s24_pending')
   if (!pending) return
   localStorage.removeItem('bk_s24_pending')
+  clearPendingDeal()
   if (!userTaxProfile) {
     // Logged in but no profile yet → go set one up
     navigateToS24()
@@ -593,7 +595,8 @@ function checkS24Pending() {
 // ─── S24 checkbox click ───────────────────────────────────────────────────────
 function s24CheckClick() {
   if (!currentUser) {
-    // Not logged in → save pending flag then open login modal
+    // Not logged in → preserve form state and set pending flag, then open login modal
+    savePendingDeal(buildDealLabel())
     localStorage.setItem('bk_s24_pending', '1')
     openModal()
     showPanel('panelLogin')

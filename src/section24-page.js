@@ -6,10 +6,12 @@ const AUTH = ''
 
 let currentUser = null
 let calcState   = null
-let incomeMode  = 'exact'
+let incomeMode  = 'exact'   // 'exact' | 'band'
+let incomeType  = 'other'   // 'other' (salary etc.) | 'total' (incl. rental)
 
 const fmtCf  = n => { const abs = '£' + Math.abs(Math.round(n)).toLocaleString('en-GB'); return n < 0 ? '−' + abs : abs }
 const fmtAbs = n => '£' + Math.abs(Math.round(n)).toLocaleString('en-GB')
+const fmtNum = n => '£' + Math.round(n).toLocaleString('en-GB')
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
@@ -34,6 +36,8 @@ async function init() {
     $('resultCard').classList.remove('hidden')
   }
 
+  updateIncomeTypeDesc()
+
   try {
     const res = await fetch(`${AUTH}/api/user/profile`, { credentials: 'include' })
     if (res.ok) {
@@ -42,28 +46,52 @@ async function init() {
     }
   } catch (e) {}
 
-  document.querySelectorAll('input[name="taxband"], input[name="incomeband"]')
+  document.querySelectorAll('input[name="incomeband"]')
     .forEach(el => el.addEventListener('change', recalc))
-  $('incomeExact').addEventListener('input', recalc)
+  $('incomeExact').addEventListener('input', () => {
+    updateTotalBreakdown()
+    recalc()
+  })
 
   recalc()
 }
 
 // ─── Prefill form ─────────────────────────────────────────────────────────────
+// Note: tax_band is now derived from income — profile.tax_band is ignored.
 function prefillForm(profile) {
-  if (profile.tax_band) {
-    const el = document.querySelector(`input[name="taxband"][value="${profile.tax_band}"]`)
-    if (el) el.checked = true
-  }
-
   if (profile.income_is_band && profile.other_annual_income != null) {
     setIncomeMode('band')
-    const el = document.querySelector(`input[name="incomeband"][value="${Math.round(profile.other_annual_income)}"]`)
+    const midpoint = Math.round(profile.other_annual_income)
+    const el = document.querySelector(`input[name="incomeband"][value="${midpoint}"]`)
     if (el) el.checked = true
   } else if (profile.other_annual_income != null) {
     setIncomeMode('exact')
     $('incomeExact').value = Math.round(profile.other_annual_income)
+    updateTotalBreakdown()
   }
+}
+
+// ─── Income type toggle ───────────────────────────────────────────────────────
+// 'other' = salary & other income excluding rental (default, stored in profile)
+// 'total' = total income including rental — we subtract property profit before saving
+function setIncomeType(type) {
+  incomeType = type
+  $('typeOther').classList.toggle('active', type === 'other')
+  $('typeTotal').classList.toggle('active', type === 'total')
+  updateIncomeTypeDesc()
+  updateTotalBreakdown()
+  // Band mode only supports 'other' type — switch to exact if needed
+  if (type === 'total' && incomeMode === 'band') {
+    setIncomeMode('exact')
+    return
+  }
+  recalc()
+}
+
+function updateIncomeTypeDesc() {
+  $('incomeTypeDesc').textContent = incomeType === 'other'
+    ? 'Salary, pension and other income — not including this rental property.'
+    : 'Your total taxable income including this rental property\'s profit. We\'ll back out the rental income for the calculation.'
 }
 
 // ─── Income mode toggle ───────────────────────────────────────────────────────
@@ -73,35 +101,100 @@ function setIncomeMode(mode) {
   $('modeBand').classList.toggle('active',  mode === 'band')
   $('incomeExactWrap').classList.toggle('hidden', mode !== 'exact')
   $('incomeBandWrap').classList.toggle('hidden',  mode !== 'band')
+  // Band mode doesn't support total type
+  if (mode === 'band' && incomeType === 'total') {
+    incomeType = 'other'
+    $('typeOther').classList.add('active')
+    $('typeTotal').classList.remove('active')
+    updateIncomeTypeDesc()
+  }
+  updateTotalBreakdown()
   recalc()
 }
 
-// ─── Read form values ─────────────────────────────────────────────────────────
-function getProfile() {
-  const taxBandEl = document.querySelector('input[name="taxband"]:checked')
-  if (!taxBandEl) return null
+// ─── Total income breakdown ───────────────────────────────────────────────────
+function updateTotalBreakdown() {
+  const wrap = $('totalBreakdown')
+  if (incomeType !== 'total' || incomeMode !== 'exact' || !calcState) {
+    wrap.classList.add('hidden')
+    return
+  }
+  const val = parseFloat($('incomeExact').value)
+  if (isNaN(val)) { wrap.classList.add('hidden'); return }
 
-  const taxBand = taxBandEl.value
+  const annualProfit = calcState.rent * 12 - calcState.monthlyCosts * 12
+  const otherIncome  = Math.max(0, val - annualProfit)
+
+  $('tbRentalProfit').textContent = fmtNum(annualProfit)
+  $('tbOtherIncome').textContent  = fmtNum(otherIncome)
+  wrap.classList.remove('hidden')
+}
+
+// ─── Convert entered value to other income ────────────────────────────────────
+function toOtherIncome(enteredValue) {
+  if (incomeType === 'other' || !calcState) return enteredValue
+  const annualProfit = calcState.rent * 12 - calcState.monthlyCosts * 12
+  return Math.max(0, enteredValue - annualProfit)
+}
+
+// ─── Derived tax band display ─────────────────────────────────────────────────
+function updateDerivedBand(totalIncome) {
+  const wrap = $('derivedBandWrap')
+  if (totalIncome === null || totalIncome === undefined) {
+    wrap.classList.add('hidden')
+    return
+  }
+  const band = S24.deriveTaxBand(totalIncome)
+  let label  = S24.taxBandLabel(band)
+  if (totalIncome > 100000 && totalIncome < 125140) {
+    label += ' + PA taper (effective ~60%)'
+  }
+  $('derivedBandLabel').textContent = label
+  wrap.classList.remove('hidden')
+}
+
+// ─── Read form → profile ──────────────────────────────────────────────────────
+function getProfile() {
+  const annualProfit = calcState ? (calcState.rent * 12 - calcState.monthlyCosts * 12) : 0
 
   if (incomeMode === 'exact') {
     const val = parseFloat($('incomeExact').value)
-    if (isNaN(val) || val < 0) return null
-    return { tax_band: taxBand, other_annual_income: val, income_is_band: false, ownership_structure: 'individual' }
+    if (isNaN(val) || val < 0) { updateDerivedBand(null); return null }
+
+    const otherIncome = toOtherIncome(val)
+    const totalIncome = otherIncome + annualProfit
+    updateDerivedBand(totalIncome)
+
+    return {
+      tax_band:            S24.deriveTaxBand(totalIncome),
+      other_annual_income: otherIncome,
+      income_is_band:      false,
+      ownership_structure: 'individual',
+    }
   } else {
     const bandEl = document.querySelector('input[name="incomeband"]:checked')
-    if (!bandEl) return null
-    return { tax_band: taxBand, other_annual_income: parseFloat(bandEl.value), income_is_band: true, ownership_structure: 'individual' }
+    if (!bandEl) { updateDerivedBand(null); return null }
+
+    const midpoint  = parseFloat(bandEl.value)
+    const bounds    = S24.BAND_BOUNDARIES[midpoint]
+    const midIncome = bounds ? (bounds.min + bounds.max) / 2 : midpoint
+    updateDerivedBand(midIncome + annualProfit)
+
+    return {
+      tax_band:            S24.deriveTaxBand(midIncome + annualProfit),
+      other_annual_income: midpoint,
+      income_is_band:      true,
+      ownership_structure: 'individual',
+    }
   }
 }
 
 // ─── Live recalculation ───────────────────────────────────────────────────────
 function recalc() {
   hideBanners()
-
   if (!calcState) return
 
   const profile = getProfile()
-
   if (!profile) {
     $('resultIncomplete').classList.remove('hidden')
     $('resultComplete').classList.add('hidden')
@@ -113,7 +206,6 @@ function recalc() {
 
   $('resultIncomplete').classList.add('hidden')
   $('resultComplete').classList.remove('hidden')
-
   renderResult(result, profile)
 }
 
@@ -122,7 +214,7 @@ function renderResult(result, profile) {
   const isRange = result.isRange
 
   if (isRange) {
-    $('statAnnualTax').textContent   = fmtAbs(result.annualTaxLow)  + '–' + fmtAbs(result.annualTaxHigh)
+    $('statAnnualTax').textContent   = fmtAbs(result.annualTaxLow) + '–' + fmtAbs(result.annualTaxHigh)
     $('statExtraTax').textContent    = fmtAbs(result.s24ExtraTaxLow) + '–' + fmtAbs(result.s24ExtraTaxHigh)
     $('statAnnualAfter').textContent = fmtCf(result.afterTaxAnnualLow) + ' – ' + fmtCf(result.afterTaxAnnualHigh)
     $('rangeCaveat').classList.remove('hidden')
@@ -136,23 +228,16 @@ function renderResult(result, profile) {
   if (result.isNeutral) {
     $('resultNeutral').classList.remove('hidden')
     $('resultImpacted').classList.add('hidden')
-
-    const val = isRange ? result.afterTaxMonthlyHigh : result.afterTaxMonthly
-    animateCf($('cfAfterTax'), val)
-
+    animateCf($('cfAfterTax'), isRange ? result.afterTaxMonthlyHigh : result.afterTaxMonthly)
     showBanner($('bannerNeutral'))
     if (isRange) showBanner($('bannerBandNote'))
-
   } else {
     $('resultNeutral').classList.add('hidden')
     $('resultImpacted').classList.remove('hidden')
 
     $('cfPreTax').textContent = fmtCf(calcState.monthly) + '/mo'
 
-    const afterLow    = isRange ? result.afterTaxMonthlyLow  : result.afterTaxMonthly
-    const afterHigh   = isRange ? result.afterTaxMonthlyHigh : result.afterTaxMonthly
-    const afterDisplay = afterLow === afterHigh ? afterLow : afterLow
-
+    const afterDisplay = isRange ? result.afterTaxMonthlyLow : result.afterTaxMonthly
     animateCf($('cfAfterTaxImpacted'), afterDisplay)
 
     const pos = afterDisplay >= 0
@@ -166,7 +251,7 @@ function renderResult(result, profile) {
     $('s24MonthlyCost').style.color = col
 
     const preTax = Math.abs(calcState.monthly) || 1
-    const pct = Math.min(100, (monthlyCost / (preTax + monthlyCost)) * 100)
+    const pct    = Math.min(100, (monthlyCost / (preTax + monthlyCost)) * 100)
     $('s24Bar').style.width      = pct + '%'
     $('s24Bar').style.background = '#fca5a5'
 
@@ -202,14 +287,9 @@ function showBanner(el) { el.classList.add('visible') }
 // ─── Save profile ─────────────────────────────────────────────────────────────
 async function saveProfile() {
   const profile = getProfile()
-
   if (!profile) {
-    if (!document.querySelector('input[name="taxband"]:checked')) {
-      document.querySelectorAll('label[for^="band-"]').forEach(l => {
-        l.style.borderColor = '#fca5a5'
-        setTimeout(() => l.style.borderColor = '', 1500)
-      })
-    }
+    $('incomeExact').style.borderColor = '#fca5a5'
+    setTimeout(() => $('incomeExact').style.borderColor = '', 1500)
     return
   }
 
@@ -223,7 +303,6 @@ async function saveProfile() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(profile),
     })
-
     if (res.ok) {
       localStorage.setItem('bk_s24_return', '1')
       window.location.href = '/'
@@ -238,7 +317,8 @@ async function saveProfile() {
   }
 }
 
-// ─── Expose globals for inline onclick handlers ───────────────────────────────
+// ─── Expose globals ───────────────────────────────────────────────────────────
+window.setIncomeType = setIncomeType
 window.setIncomeMode = setIncomeMode
 window.recalc        = recalc
 window.saveProfile   = saveProfile

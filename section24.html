@@ -68,7 +68,7 @@
 
     <!-- Incomplete form state -->
     <div id="resultIncomplete">
-      <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-3 text-gold">COMPLETE YOUR TAX PROFILE</div>
+      <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-3 text-gold">ENTER YOUR INCOME BELOW</div>
       <div class="cf-num text-white/30">£—</div>
       <div class="text-[11px] text-white/30 mt-1 tracking-wide">after-tax monthly cashflow</div>
       <div class="text-[11px] text-white/20 mt-3">Fill in the form below to see your S24 result.</div>
@@ -77,17 +77,17 @@
     <!-- Complete result state -->
     <div id="resultComplete" class="hidden">
 
-      <!-- Neutral (basic rate) -->
+      <!-- Neutral -->
       <div id="resultNeutral" class="hidden">
         <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-3 text-green-300">S24 NEUTRAL FOR YOU</div>
         <div class="cf-num num-pop" id="cfAfterTax" style="color:#86efac">£—</div>
         <div class="text-[11px] text-white/40 mt-1 tracking-wide">after-tax monthly cashflow</div>
         <p class="text-[11px] text-white/30 mt-3 leading-relaxed">
-          As a basic rate taxpayer, Section 24 doesn't change your position — you received 20% relief before, and you receive a 20% credit now. The figures below are identical to your pre-tax cashflow.
+          At your income level, Section 24 does not cost you extra. The 20% credit matches the relief you would have received under the old rules.
         </p>
       </div>
 
-      <!-- Impacted (higher / additional rate) -->
+      <!-- Impacted -->
       <div id="resultImpacted" class="hidden">
         <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-2 transition-colors" id="resultVerdict" style="color:#fca5a5">S24 IMPACT</div>
 
@@ -130,7 +130,7 @@
       </div>
 
       <div id="rangeCaveat" class="hidden mt-3 text-[10px] leading-relaxed" style="color:rgba(255,255,255,.25)">
-        ⚠ Estimated range based on income band. For a precise figure, enter your exact annual income.
+        ⚠ Estimated range based on income band. Enter your exact income for a precise figure.
       </div>
 
     </div>
@@ -139,6 +139,7 @@
   <!-- ─── Form Card ─── -->
   <div class="bg-white rounded-2xl border border-cream-dark px-5 pt-5 pb-6 shadow-sm">
 
+    <!-- Ownership -->
     <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-3.5">Ownership</div>
     <div class="grid grid-cols-2 gap-2 mb-4">
       <input type="radio" name="ownership" id="own-individual" value="individual" class="toggle-radio" checked>
@@ -158,69 +159,77 @@
 
     <div class="sec-rule-light my-4"></div>
 
-    <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-3.5">Your Tax Band</div>
-    <div class="grid grid-cols-3 gap-2 mb-1">
-      <input type="radio" name="taxband" id="band-basic" value="basic" class="toggle-radio">
-      <label for="band-basic" class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[13px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
-        Basic<br><span class="text-[10px]">20%</span>
-      </label>
-      <input type="radio" name="taxband" id="band-higher" value="higher" class="toggle-radio">
-      <label for="band-higher" class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[13px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
-        Higher<br><span class="text-[10px]">40%</span>
-      </label>
-      <input type="radio" name="taxband" id="band-additional" value="additional" class="toggle-radio">
-      <label for="band-additional" class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[13px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
-        Additional<br><span class="text-[10px]">45%</span>
-      </label>
+    <!-- Annual Income -->
+    <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-2">Annual Income</div>
+
+    <!-- Income type toggle -->
+    <div class="flex gap-1 bg-cream rounded-[10px] p-1 mb-2">
+      <button type="button" id="typeOther" class="mode-tab active" onclick="setIncomeType('other')">Salary &amp; other</button>
+      <button type="button" id="typeTotal" class="mode-tab"        onclick="setIncomeType('total')">Total inc. rental</button>
     </div>
-    <div class="text-[10px] text-stone-300 mt-1.5 leading-relaxed mb-4">
-      Your marginal rate on rental income. If unsure, check your most recent tax return or P60.
+    <div id="incomeTypeDesc" class="text-[11px] text-stone-400 mb-3 leading-relaxed">
+      Salary, pension and other income — not including this rental property.
     </div>
 
-    <div class="sec-rule-light my-4"></div>
-
-    <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-400 mb-3.5">Other Annual Income</div>
-    <div class="text-[11px] text-stone-400 mb-3 leading-relaxed">
-      Salary, pension, or other taxable income — excluding this rental property.
-    </div>
-
+    <!-- Exact / band mode toggle -->
     <div class="flex gap-1 bg-cream rounded-[10px] p-1 mb-3" id="modeToggle">
       <button type="button" id="modeExact" class="mode-tab active" onclick="setIncomeMode('exact')">Exact amount</button>
       <button type="button" id="modeBand"  class="mode-tab"        onclick="setIncomeMode('band')">Income band</button>
     </div>
 
+    <!-- Exact input -->
     <div id="incomeExactWrap">
       <div class="relative has-pre">
         <span class="sym sym-l">£</span>
-        <input type="number" id="incomeExact" class="field-input" placeholder="45000" oninput="recalc()">
+        <input type="number" id="incomeExact" class="field-input" placeholder="45000">
+      </div>
+      <!-- Total mode breakdown — shown when incomeType = 'total' -->
+      <div id="totalBreakdown" class="hidden mt-2 px-3 py-2.5 bg-cream rounded-[10px] text-[11px] text-stone-400 leading-relaxed">
+        Annual rental profit from this deal: <span id="tbRentalProfit" class="font-semibold text-ink">—</span><br>
+        Other income used for calculation: <span id="tbOtherIncome" class="font-semibold text-brand">—</span>
       </div>
     </div>
 
+    <!-- Band input — 4 bands in 2-column grid -->
     <div id="incomeBandWrap" class="hidden">
-      <div class="grid grid-cols-3 gap-2">
-        <input type="radio" name="incomeband" id="ib-low"  value="25000"  class="toggle-radio">
-        <label for="ib-low"  class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
-          Under<br>£50k
+      <div class="grid grid-cols-2 gap-2">
+        <input type="radio" name="incomeband" id="ib-basic"  value="25000"  class="toggle-radio">
+        <label for="ib-basic"  class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
+          Under<br>£50,270
         </label>
-        <input type="radio" name="incomeband" id="ib-mid"  value="75000"  class="toggle-radio">
-        <label for="ib-mid"  class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
+        <input type="radio" name="incomeband" id="ib-higher" value="75000"  class="toggle-radio">
+        <label for="ib-higher" class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
           £50k –<br>£100k
         </label>
-        <input type="radio" name="incomeband" id="ib-high" value="150000" class="toggle-radio">
-        <label for="ib-high" class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
-          Over<br>£100k
+        <input type="radio" name="incomeband" id="ib-taper"  value="112500" class="toggle-radio">
+        <label for="ib-taper"  class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
+          £100k –<br>£125k ⚡
         </label>
+        <input type="radio" name="incomeband" id="ib-add"    value="150000" class="toggle-radio">
+        <label for="ib-add"    class="toggle-lbl flex items-center justify-center h-12 rounded-[10px] border-[1.5px] border-[#DDD8CF] bg-cream text-[11px] font-medium text-stone-400 cursor-pointer select-none transition-all duration-150 text-center leading-tight px-1">
+          Over<br>£125,140
+        </label>
+      </div>
+      <div class="text-[10px] text-stone-300 mt-2 leading-relaxed">
+        ⚡ £100k–£125k is the PA taper zone. Personal Allowance is withdrawn here, creating an effective marginal rate of ~60%. S24 is particularly costly in this range.
       </div>
     </div>
 
+    <!-- Derived tax band (live) -->
+    <div id="derivedBandWrap" class="hidden flex items-center gap-2 mt-3">
+      <span class="text-[11px] text-stone-400">Marginal rate:</span>
+      <span id="derivedBandLabel" class="text-[11px] font-semibold text-brand"></span>
+    </div>
+
+    <!-- Banners -->
     <div class="mt-4 flex flex-col gap-2.5">
       <div class="banner banner-red"   id="bannerHighImpact"></div>
       <div class="banner banner-amber" id="bannerModImpact"></div>
       <div class="banner banner-green" id="bannerNeutral">
-        <strong>Good news:</strong> As a basic rate taxpayer, Section 24 is neutral for you. You received 20% mortgage interest relief before S24, and you receive a 20% credit now — the maths is the same.
+        <strong>S24 is neutral at your income level.</strong> The 20% credit you receive matches the tax relief you would have had under the old rules — so S24 doesn't cost you extra on this deal.
       </div>
       <div class="banner banner-slate" id="bannerBandNote">
-        ⚠ <strong>Estimated range.</strong> Because you've selected an income band rather than an exact figure, the result above shows a range. Enter your exact income above for a precise figure.
+        ⚠ <strong>Estimated range.</strong> You've selected an income band — the result above shows a range. Enter your exact income for a precise figure.
       </div>
     </div>
 

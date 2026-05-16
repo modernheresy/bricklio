@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand:       #1A3828;
+  --color-brand-mid:   #2A5C42;
+  --color-brand-light: #3D8B63;
+  --color-gold:        #BFA054;
+  --color-gold-light:  #D4B878;
+  --color-cream:       #F4F1EA;
+  --color-cream-dark:  #EAE5DB;
+  --color-ink:         #1A1A1A;
+
+  --font-display: "Cormorant", serif;
+  --font-sans:    "Plus Jakarta Sans", sans-serif;
+}
+
+/* ── Base ── */
+body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* ── Toggle radio ── */
+.toggle-radio { display: none; }
+.toggle-radio:checked + .toggle-lbl {
+  background: #1A3828;
+  color: #fff;
+  border-color: #1A3828;
+}
+
+/* ── Field input ── */
+.field-input {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid #DDD8CF;
+  border-radius: 10px;
+  background: #F4F1EA;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color .18s, background .18s;
+  padding: 0 14px;
+}
+.field-input:focus { outline: none; border-color: #1A3828; background: #fff; }
+.has-pre .field-input { padding-left: 28px; }
+.has-suf .field-input { padding-right: 36px; }
+
+/* ── Symbol overlays ── */
+.sym {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  font-size: 14px; font-weight: 500; color: #9B9489;
+  pointer-events: none;
+}
+.sym-l { left: 13px; }
+.sym-r { right: 13px; }
+
+/* ── Animations ── */
+@keyframes numPop {
+  0%   { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0);   opacity: 1; }
+}
+.num-pop { animation: numPop .22s cubic-bezier(.22,1,.36,1) both; }
+
+@keyframes dealIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeSlideIn .25s ease both; }
+
+/* ── Yield bar ── */
+.ybar-fill { transition: width .55s cubic-bezier(.4,0,.2,1), background .4s; }
+
+/* ── Cashflow number ── */
+.cf-num {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(54px, 14vw, 72px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+  transition: color .35s;
+}
+
+/* Section 24 page variant */
+.cf-num-s24 {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(44px, 12vw, 60px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+  transition: color .35s;
+}
+
+/* ── Rules ── */
+.sec-rule       { border-top: 1px solid rgba(255,255,255,.1); }
+.sec-rule-light { border-top: 1px solid #E5E0D6; }
+
+/* ── SDLT box ── */
+.sdlt-box {
+  background: #F0EDE5;
+  border: 1.5px solid #DDD8CF;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ── Checkbox ── */
+.ck-wrap { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.ck-box {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border: 1.5px solid #C4BEB4; border-radius: 5px;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+#sdltCheck { display: none; }
+
+/* ── Modal ── */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(26,26,26,.55);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 460px;
+  padding: 28px 24px 36px;
+  transform: translateY(100%);
+  transition: transform .35s cubic-bezier(.32,1,.56,1);
+}
+.modal-backdrop.open .modal-sheet { transform: translateY(0); }
+.modal-handle {
+  width: 36px; height: 4px;
+  background: #E5E0D6; border-radius: 99px;
+  margin: 0 auto 20px;
+}
+.modal-panel { display: none; }
+.modal-panel.active { display: block; }
+
+/* ── Save button loading state ── */
+#saveBtn.loading { opacity: .6; pointer-events: none; }
+
+/* ── Deal cards ── */
+.deal-card {
+  background: #F4F1EA;
+  border: 1.5px solid #E5E0D6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  transition: opacity .3s, transform .3s;
+  animation: dealIn .2s ease both;
+}
+.deal-card.removing {
+  opacity: 0;
+  transform: translateX(12px);
+  pointer-events: none;
+}
+.deal-cf-pos { color: #166534; }
+.deal-cf-neg { color: #991b1b; }
+
+/* ── Section 24 toggle ── */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+.s24-track {
+  width: 44px; height: 24px;
+  background: #F4F1EA;
+  border: 1.5px solid #DDD8CF;
+  border-radius: 99px;
+  position: relative;
+  transition: background .2s, border-color .2s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.s24-track.on { background: #1A3828; border-color: #1A3828; }
+.s24-knob {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #C4BEB4;
+  transition: transform .2s, background .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
+}
+.s24-track.on .s24-knob { transform: translateX(20px); background: #fff; }
+
+/* ── S24 after-tax on result card ── */
+.s24-after-num {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(26px, 7vw, 32px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  transition: color .3s;
+}
+
+/* ── Section 24 page: income mode tabs ── */
+.mode-tab {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9B9489;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid transparent;
+}
+.mode-tab.active {
+  background: #1A3828;
+  color: #fff;
+  border-color: #1A3828;
+}
+
+/* ── Section 24 page: banners ── */
+.banner {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.55;
+  display: none;
+}
+.banner.visible   { display: block; }
+.banner-red       { background: #FEF2F2; border: 1.5px solid #FECACA; color: #991B1B; }
+.banner-amber     { background: #FFFBEB; border: 1.5px solid #FDE68A; color: #92400E; }
+.banner-green     { background: #F0FDF4; border: 1.5px solid #BBF7D0; color: #166534; }
+.banner-slate     { background: #F8FAFC; border: 1.5px solid #E2E8F0; color: #475569; }
+
+/* ── Section 24 page: result rows ── */
+.cf-row    { display: flex; flex-direction: column; gap: 2px; }
+.cf-label  { font-size: 10px; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 600; }
+
+/* ── Section 24 page: vs pill ── */
+.vs-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,.3);
+  flex-shrink: 0;
+}
+
+/* ── Section 24 page: saving bar ── */
+.saving-bar {
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.1);
+  margin-top: 8px;
+  overflow: hidden;
+}
+.saving-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .55s cubic-bezier(.4,0,.2,1), background .4s;
+}
+
+/* ── Disabled toggle label ── */
+.toggle-lbl-disabled { opacity: .38; cursor: not-allowed; }

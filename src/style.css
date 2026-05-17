@@ -184,12 +184,16 @@ input[type=number] { -moz-appearance: textfield; }
 
 /* ── Section 24 checkbox ── */
 .s24-ck-box {
-  width: 18px; height: 18px; flex-shrink: 0;
-  border: 1.5px solid #C4BEB4; border-radius: 5px;
+  width: 26px; height: 26px; flex-shrink: 0;
+  border: 2px solid #C4BEB4; border-radius: 7px;
   background: #fff;
   display: flex; align-items: center; justify-content: center;
-  transition: all .15s;
+  transition: background .15s, border-color .15s;
   cursor: pointer;
+}
+.s24-ck-box.checked {
+  background: #0E0420;
+  border-color: #0E0420;
 }
 
 /* ── S24 after-tax on result card ── */

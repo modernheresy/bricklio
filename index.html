@@ -236,22 +236,27 @@
 
     <div class="sec-rule-light mt-5 mb-4"></div>
 
-    <!-- ─── Section 24 ─── -->
-    <div class="flex items-center gap-3">
-      <div class="s24-ck-box" id="s24CkBox" onclick="s24CheckClick()">
-        <svg id="s24CkTick" width="10" height="8" viewBox="0 0 10 8" fill="none" style="display:none">
-          <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- ─── Section 24 ─── -->
+    <div class="flex items-center gap-3.5">
+      <div class="s24-ck-box" id="s24CkBox" onclick="s24CheckClick()"
+        style="width:26px;height:26px;border-radius:7px;border:2px solid #C4BEB4;flex-shrink:0">
+        <svg id="s24CkTick" width="13" height="10" viewBox="0 0 13 10" fill="none" style="display:none">
+          <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="min-w-0 flex-1">
-        <div class="flex items-center gap-2">
-          <div class="text-[10px] font-semibold tracking-[1.6px] uppercase text-stone-700">Section 24</div>
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-[13px] font-semibold text-stone-700 tracking-tight">Section 24 Tax</div>
           <a href="/section24.html" id="s24EditLink"
-            class="hidden text-[10px] font-semibold text-brand/60 hover:text-brand transition-colors">
-            Edit →
+            class="hidden items-center gap-1.5 px-3 h-7 rounded-lg text-[11px] font-semibold tracking-wide transition-colors"
+            style="display:none;border:1.5px solid rgba(14,4,32,.2);background:rgba(14,4,32,.04);color:#0E0420">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="display:inline;margin-right:3px">
+              <path d="M1.5 8.5L8.5 1.5M8.5 1.5H3.5M8.5 1.5V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Edit
           </a>
         </div>
-        <div class="text-[11px] text-stone-500 leading-relaxed">After-tax cashflow · account feature</div>
+        <div class="text-[11px] text-stone-500 leading-relaxed mt-0.5">After-tax cashflow · account feature</div>
       </div>
     </div>
 

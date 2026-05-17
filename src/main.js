@@ -648,6 +648,7 @@ function deactivateS24() {
   $('s24CkTick').style.display    = 'none'
   localStorage.removeItem('bk_s24_active')
   $('s24Result').classList.add('hidden')
+  $('s24NoProfit').classList.add('hidden')
   if (lastCalc) { $('s24Warning').classList.remove('hidden'); calc() }
 }
 
@@ -657,9 +658,19 @@ function updateS24Display() {
   const result = S24.calculate(userTaxProfile, lastCalc)
   if (!result || result.notApplicable) {
     $('s24Result').classList.add('hidden')
+    $('s24NoProfit').classList.add('hidden')
     return
   }
 
+  // No taxable profit — show explainer instead of S24 result
+  const annualPropertyProfit = lastCalc.rent * 12 - lastCalc.monthlyCosts * 12
+  if (annualPropertyProfit <= 0) {
+    $('s24Result').classList.add('hidden')
+    $('s24NoProfit').classList.remove('hidden')
+    return
+  }
+
+  $('s24NoProfit').classList.add('hidden')
   $('s24Result').classList.remove('hidden')
 
   const isRange = result.isRange

@@ -62,6 +62,8 @@ function calcSingle({ rent, monthlyCosts, monthlyInterest, preTaxMonthly, otherA
 
   // ── Post-S24 ─────────────────────────────────────────────────────────────
   const totalIncome  = otherAnnualIncome + annualPropertyProfit
+  // ANI = gross total income (pre-PA). PA taper must be calculated on ANI,
+  // not on post-PA taxable income. Recalculated independently for pre- and post-S24.
   const pa           = getAdjustedPA(totalIncome)
   const grossTax     = calcIncomeTax(totalIncome, pa)
 
@@ -90,6 +92,7 @@ function calcSingle({ rent, monthlyCosts, monthlyInterest, preTaxMonthly, otherA
   // the true extra tax burden.
   const preS24Profit = Math.max(0, annualPropertyProfit - annualFinanceCosts)
   const preS24Total  = otherAnnualIncome + preS24Profit
+  // ANI recalculated on pre-S24 total — lower income may preserve PA entirely.
   const preS24PA     = getAdjustedPA(preS24Total)
   const preS24Tax    = calcIncomeTax(preS24Total, preS24PA)
   const s24ExtraTax  = annualTax - preS24Tax

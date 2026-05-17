@@ -647,7 +647,7 @@ function deactivateS24() {
   $('s24CkTick').style.display    = 'none'
   localStorage.removeItem('bk_s24_active')
   $('s24Result').classList.add('hidden')
-  if (lastCalc) $('s24Warning').classList.remove('hidden')
+  if (lastCalc) { $('s24Warning').classList.remove('hidden'); calc() }
 }
 
 function updateS24Display() {

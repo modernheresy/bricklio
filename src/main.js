@@ -53,8 +53,8 @@ function restorePendingDeal() {
     if (radio) radio.checked = true
 
     $('sdltCheck').checked       = fields.addSDLT
-    $('ckBox').style.background  = fields.addSDLT ? '#1A3828' : '#fff'
-    $('ckBox').style.borderColor = fields.addSDLT ? '#1A3828' : '#C4BEB4'
+    $('ckBox').style.background  = fields.addSDLT ? '#0E0420' : '#fff'
+    $('ckBox').style.borderColor = fields.addSDLT ? '#0E0420' : '#C4BEB4'
     $('ckTick').style.display    = fields.addSDLT ? 'block'   : 'none'
 
     lastCalc = savedCalc
@@ -244,8 +244,8 @@ function buildDealLabel() {
 
 // ─── Calculator ───────────────────────────────────────────────────────────────
 $('sdltCheck').addEventListener('change', function() {
-  $('ckBox').style.background  = this.checked ? '#1A3828' : '#fff'
-  $('ckBox').style.borderColor = this.checked ? '#1A3828' : '#C4BEB4'
+  $('ckBox').style.background  = this.checked ? '#0E0420' : '#fff'
+  $('ckBox').style.borderColor = this.checked ? '#0E0420' : '#C4BEB4'
   $('ckTick').style.display    = this.checked ? 'block'   : 'none'
 })
 
@@ -485,8 +485,8 @@ async function loadDeal(id) {
     if (radio) radio.checked = true
 
     $('sdltCheck').checked       = !!d.addSDLT
-    $('ckBox').style.background  = d.addSDLT ? '#1A3828' : '#fff'
-    $('ckBox').style.borderColor = d.addSDLT ? '#1A3828' : '#C4BEB4'
+    $('ckBox').style.background  = d.addSDLT ? '#0E0420' : '#fff'
+    $('ckBox').style.borderColor = d.addSDLT ? '#0E0420' : '#C4BEB4'
     $('ckTick').style.display    = d.addSDLT ? 'block'   : 'none'
 
     closeModal()
@@ -548,6 +548,9 @@ function checkS24Return() {
   const returning = localStorage.getItem('bk_s24_return')
   if (!returning) return
   localStorage.removeItem('bk_s24_return')
+  // Restore the form fields that were saved before navigating to S24
+  restorePendingDeal()
+  clearPendingDeal()
   if (userTaxProfile && lastCalc) {
     activateS24()
   }
@@ -592,6 +595,8 @@ function s24CheckClick() {
 
 function navigateToS24() {
   if (lastCalc) localStorage.setItem('bk_calc', JSON.stringify(lastCalc))
+  // Save raw field values so the form is fully restored when returning
+  savePendingDeal(buildDealLabel())
   window.location.href = '/section24.html'
 }
 
@@ -611,8 +616,8 @@ function navigateToStress() {
 
 function activateS24(silent = false) {
   s24Active = true
-  $('s24CkBox').style.background  = '#1A3828'
-  $('s24CkBox').style.borderColor = '#1A3828'
+  $('s24CkBox').style.background  = '#0E0420'
+  $('s24CkBox').style.borderColor = '#0E0420'
   $('s24CkTick').style.display    = 'block'
   localStorage.setItem('bk_s24_active', '1')
   $('s24Warning').classList.add('hidden')

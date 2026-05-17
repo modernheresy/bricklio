@@ -78,9 +78,11 @@ function calcSingle({ rent, monthlyCosts, monthlyInterest, preTaxMonthly, otherA
     Math.max(0, annualPropertyProfit),
     taxableIncome
   ))
-  const s24Credit  = creditableAmount * 0.20
-  const annualTax  = Math.max(0, grossTax - s24Credit)
-  const monthlyTax = annualTax / 12
+  const s24Credit       = creditableAmount * 0.20
+  const annualTax       = Math.max(0, grossTax - s24Credit)
+  const salaryTax       = calcIncomeTax(otherAnnualIncome, getAdjustedPA(otherAnnualIncome))
+  const propertyTax     = Math.max(0, annualTax - salaryTax)
+  const monthlyTax      = propertyTax / 12
 
   const afterTaxMonthly = preTaxMonthly - monthlyTax
   const afterTaxAnnual  = afterTaxMonthly * 12

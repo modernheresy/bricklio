@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bricklio — Section 24 Analysis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="module" src="/src/section24-page.js"></script>
 </head>
 
@@ -16,13 +16,13 @@
   <header class="flex items-center justify-between pb-5 border-b border-cream-dark">
     <a href="/" class="flex items-center gap-2.5 select-none">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2"  y="2"  width="11" height="6" rx="1.5" fill="#1A3828"/>
-        <rect x="15" y="2"  width="11" height="6" rx="1.5" fill="#1A3828" opacity=".55"/>
-        <rect x="7"  y="11" width="11" height="6" rx="1.5" fill="#1A3828"/>
-        <rect x="2"  y="11" width="3"  height="6" rx="1.5" fill="#1A3828" opacity=".35"/>
-        <rect x="20" y="11" width="6"  height="6" rx="1.5" fill="#1A3828" opacity=".35"/>
-        <rect x="2"  y="20" width="11" height="6" rx="1.5" fill="#1A3828" opacity=".7"/>
-        <rect x="15" y="20" width="11" height="6" rx="1.5" fill="#1A3828"/>
+        <rect x="2"  y="2"  width="11" height="6" rx="1.5" fill="#0E0420"/>
+        <rect x="15" y="2"  width="11" height="6" rx="1.5" fill="#0E0420" opacity=".55"/>
+        <rect x="7"  y="11" width="11" height="6" rx="1.5" fill="#0E0420"/>
+        <rect x="2"  y="11" width="3"  height="6" rx="1.5" fill="#0E0420" opacity=".35"/>
+        <rect x="20" y="11" width="6"  height="6" rx="1.5" fill="#0E0420" opacity=".35"/>
+        <rect x="2"  y="20" width="11" height="6" rx="1.5" fill="#0E0420" opacity=".7"/>
+        <rect x="15" y="20" width="11" height="6" rx="1.5" fill="#0E0420"/>
       </svg>
       <span class="font-display font-semibold text-[28px] leading-none text-brand tracking-tight">Bricklio</span>
     </a>
@@ -80,7 +80,7 @@
       <!-- Neutral -->
       <div id="resultNeutral" class="hidden">
         <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-3 text-green-300">S24 NEUTRAL FOR YOU</div>
-        <div class="cf-num num-pop" id="cfAfterTax" style="color:#86efac">£—</div>
+        <div class="cf-num num-pop" id="cfAfterTax" style="color:#057A3A">£—</div>
         <div class="text-[11px] text-white/40 mt-1 tracking-wide">after-tax monthly cashflow</div>
         <p class="text-[11px] text-white/30 mt-3 leading-relaxed">
           At your income level, Section 24 does not cost you extra. The 20% credit matches the relief you would have received under the old rules.
@@ -89,7 +89,7 @@
 
       <!-- Impacted -->
       <div id="resultImpacted" class="hidden">
-        <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-2 transition-colors" id="resultVerdict" style="color:#fca5a5">S24 IMPACT</div>
+        <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-2 transition-colors" id="resultVerdict" style="color:#B85000">S24 IMPACT</div>
 
         <div class="flex items-start gap-4">
           <div class="cf-row flex-1">
@@ -98,17 +98,17 @@
           </div>
           <div class="cf-row flex-1">
             <div class="cf-label mb-1" id="afterTaxLabel" style="color:rgba(255,255,255,.4)">After S24</div>
-            <div class="cf-num-s24 num-pop" id="cfAfterTaxImpacted" style="color:#fca5a5">£—</div>
+            <div class="cf-num-s24 num-pop" id="cfAfterTaxImpacted" style="color:#B85000">£—</div>
           </div>
         </div>
 
         <div id="s24CostRow" class="mt-4">
           <div class="flex justify-between items-center text-[10px] mb-1">
             <span style="color:rgba(255,255,255,.3)">S24 monthly cost</span>
-            <span id="s24MonthlyCost" class="font-semibold" style="color:#fca5a5">—</span>
+            <span id="s24MonthlyCost" class="font-semibold" style="color:#B85000">—</span>
           </div>
           <div class="saving-bar">
-            <div class="saving-bar-fill" id="s24Bar" style="width:0%;background:#fca5a5"></div>
+            <div class="saving-bar-fill" id="s24Bar" style="width:0%;background:#B85000"></div>
           </div>
         </div>
       </div>

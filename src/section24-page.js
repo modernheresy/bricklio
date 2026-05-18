@@ -215,12 +215,12 @@ function renderResult(result, profile) {
 
   if (isRange) {
     $('statAnnualTax').textContent   = fmtAbs(result.annualTaxLow) + '–' + fmtAbs(result.annualTaxHigh)
-    $('statExtraTax').textContent    = fmtAbs(result.annualTaxLow / 12) + '–' + fmtAbs(result.annualTaxHigh / 12)
+    $('statExtraTax').textContent    = fmtAbs(result.worstCase.monthlyTax) + '–' + fmtAbs(result.bestCase.monthlyTax)
     $('statAnnualAfter').textContent = fmtAbs(result.s24ExtraTaxLow / 12) + '–' + fmtAbs(result.s24ExtraTaxHigh / 12)
     $('rangeCaveat').classList.remove('hidden')
   } else {
     $('statAnnualTax').textContent   = fmtAbs(result.annualTax)
-    $('statExtraTax').textContent    = fmtAbs(result.annualTax / 12)
+    $('statExtraTax').textContent    = fmtAbs(result.monthlyTax)
     $('statAnnualAfter').textContent = fmtAbs(result.s24ExtraMonthly)
     $('rangeCaveat').classList.add('hidden')
   }

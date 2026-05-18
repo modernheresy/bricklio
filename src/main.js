@@ -99,9 +99,11 @@ async function initAuth() {
       await fetchTaxProfile()
       checkS24Pending()
       checkS24Return()
+      checkStressReturn()
     }
   } catch (e) {
     // Guest mode
+    checkStressReturn()
   }
 }
 
@@ -559,6 +561,13 @@ async function fetchTaxProfile() {
       }
     }
   } catch (e) {}
+}
+
+function checkStressReturn() {
+  if (!localStorage.getItem('bk_stress_return')) return
+  localStorage.removeItem('bk_stress_return')
+  restorePendingDeal()
+  clearPendingDeal()
 }
 
 function checkS24Return() {

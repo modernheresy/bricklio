@@ -405,4 +405,29 @@ function resetSliders() {
 
 window.resetSliders = resetSliders
 
+// ─── Back navigation — persist deal state so main.js can restore the form ─────
+function goBack() {
+  if (baseInputs) {
+    localStorage.setItem('yk_pending', JSON.stringify({
+      calc: baseInputs,
+      label: null,
+      fields: {
+        price:   baseInputs.price   ?? '',
+        deposit: baseInputs.deposit ?? 25,
+        rate:    baseInputs.rate    ?? 5,
+        rent:    baseInputs.rent    ?? '',
+        agent:   baseInputs.agent   ?? 10,
+        void:    baseInputs.voidWks ?? 2,
+        costs:   baseInputs.costs   ?? 150,
+        mtype:   baseInputs.type    ?? 'interest',
+        addSDLT: baseInputs.addSDLT ?? false,
+      }
+    }))
+    localStorage.setItem('bk_stress_return', '1')
+  }
+  window.location.href = '/'
+}
+
+window.goBack = goBack
+
 init()

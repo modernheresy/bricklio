@@ -17,11 +17,11 @@ const fmtNum = n => '£' + Math.round(n).toLocaleString('en-GB')
 async function init() {
   try {
     const res = await fetch(`${AUTH}/api/auth/me`, { credentials: 'include' })
-    if (!res.ok) { window.location.href = '/'; return }
+    if (!res.ok) { window.location.href = '/yield.html'; return }
     const { user } = await res.json()
     currentUser = user
   } catch (e) {
-    window.location.href = '/'
+    window.location.href = '/yield.html'
     return
   }
 
@@ -305,7 +305,7 @@ async function saveProfile() {
     })
     if (res.ok) {
       localStorage.setItem('bk_s24_return', '1')
-      window.location.href = '/'
+      window.location.href = '/yield.html'
     } else {
       alert('Could not save profile. Please try again.')
     }

@@ -426,7 +426,7 @@ function goBack() {
     }))
     localStorage.setItem('bk_stress_return', '1')
   }
-  window.location.href = '/'
+  window.location.href = '/yield.html'
 }
 
 window.goBack = goBack

@@ -3,331 +3,285 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bricklio — UK Property Tools</title>
+  <title>Bricklio — BTL Property Calculator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" crossorigin href="/assets/style-CZc2oI5h.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
-    .tool-card {
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:      #0E0420;
+      --cream:      #F4F1EA;
+      --cream-dark: #E8E3DB;
+      --ink:        #1A1A1A;
+      --mid:        #6B6560;
+      --gold:       #B8742A;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 32px 0 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-word {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--brand);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    /* ── Rule ── */
+    .rule {
+      border: none;
+      border-top: 1px solid var(--cream-dark);
+      margin: 28px 0;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      padding: 48px 0 64px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 7vw, 48px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: var(--brand);
+      margin-bottom: 28px;
+    }
+
+    .body-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--mid);
+      max-width: 480px;
+      margin-bottom: 16px;
+    }
+
+    .body-text + .body-text {
+      margin-bottom: 40px;
+    }
+
+    .body-text strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--brand);
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      padding: 16px 28px;
+      border-radius: 10px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .cta:hover  { background: #1e1040; }
+    .cta:active { transform: scale(0.99); }
+
+    .cta-arrow {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+
+    .cta:hover .cta-arrow { transform: translateX(3px); }
+
+    /* ── Divider with label ── */
+    .feature-rule {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 56px 0 32px;
+    }
+
+    .feature-rule-line {
+      flex: 1;
+      height: 1px;
+      background: var(--cream-dark);
+    }
+
+    .feature-rule-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #b0a99f;
+      white-space: nowrap;
+    }
+
+    /* ── Feature list ── */
+    .features {
       display: flex;
       flex-direction: column;
       gap: 0;
-      background: #fff;
-      border-radius: 16px;
-      border: 1.5px solid #E8E3DC;
-      overflow: hidden;
-      text-decoration: none;
-      transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
-      box-shadow: 0 1px 3px rgba(14,4,32,.04);
     }
-    .tool-card:hover {
-      box-shadow: 0 4px 16px rgba(14,4,32,.1);
-      transform: translateY(-1px);
-      border-color: rgba(14,4,32,.18);
-    }
-    .tool-card:active {
-      transform: translateY(0);
-    }
-    .tool-card-body {
-      padding: 20px 20px 16px;
-    }
-    .tool-card-footer {
-      padding: 12px 20px;
-      background: #F7F4F0;
-      border-top: 1.5px solid #E8E3DC;
+
+    .feature {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--cream-dark);
     }
-    .tool-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
+
+    .feature:first-child {
+      border-top: 1px solid var(--cream-dark);
+    }
+
+    .feature-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--brand);
+      min-width: 160px;
       flex-shrink: 0;
     }
-    .icon-brand  { background: rgba(14,4,32,.07); }
-    .icon-amber  { background: rgba(180,83,9,.08); }
-    .icon-green  { background: rgba(5,122,58,.08); }
-    .cta-primary {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 52px;
-      border-radius: 12px;
-      background: #0E0420;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: .03em;
-      text-decoration: none;
-      transition: background 0.15s, transform 0.1s;
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.5;
     }
-    .cta-primary:hover  { background: #1e1040; }
-    .cta-primary:active { transform: scale(.99); }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
+
+    /* ── Footer ── */
+    footer {
+      padding: 24px 0 32px;
+      border-top: 1px solid var(--cream-dark);
     }
-    .badge-new   { background: rgba(5,122,58,.1);  color: #057A3A; }
-    .badge-free  { background: rgba(14,4,32,.06);  color: rgba(14,4,32,.5); }
-    .stat-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(14,4,32,.05);
-      font-size: 10px;
-      font-weight: 600;
-      color: rgba(14,4,32,.45);
-      letter-spacing: .04em;
+
+    .footer-text {
+      font-size: 11px;
+      color: #b0a99f;
+      line-height: 1.6;
     }
-    .divider {
-      height: 1px;
-      background: #E8E3DC;
+
+    @media (max-width: 480px) {
+      .feature-name { min-width: 130px; }
     }
-    .hero-card {
-      position: relative;
-      border-radius: 20px;
-      background: #0E0420;
-      overflow: hidden;
-      padding: 28px 24px 24px;
-    }
-    .hero-card .orb1 {
-      position: absolute;
-      top: -40px; right: -40px;
-      width: 160px; height: 160px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.05);
-      pointer-events: none;
-    }
-    .hero-card .orb2 {
-      position: absolute;
-      top: -20px; right: -20px;
-      width: 90px; height: 90px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.05);
-      pointer-events: none;
-    }
-    .hero-card .orb3 {
-      position: absolute;
-      bottom: -30px; left: 60px;
-      width: 110px; height: 110px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.02);
-      pointer-events: none;
-    }
-    .section-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: rgba(14,4,32,.4);
-      margin-bottom: 10px;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .fade-up { animation: fadeUp .4s ease both; }
-    .fade-up-1 { animation-delay: .05s; }
-    .fade-up-2 { animation-delay: .1s;  }
-    .fade-up-3 { animation-delay: .15s; }
-    .fade-up-4 { animation-delay: .2s;  }
   </style>
 </head>
+<body>
 
-<body class="bg-cream min-h-screen py-8 px-4">
-<div class="max-w-[460px] mx-auto flex flex-col gap-4">
+  <div class="wrap">
 
-  <!-- ─── Header ─── -->
-  <header class="flex items-center justify-between pb-5 border-b border-cream-dark fade-up">
-    <a href="/" class="flex items-center gap-2.5 select-none">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2"  y="2"  width="11" height="6" rx="1.5" fill="#0E0420"/>
-        <rect x="15" y="2"  width="11" height="6" rx="1.5" fill="#0E0420" opacity=".55"/>
-        <rect x="7"  y="11" width="11" height="6" rx="1.5" fill="#0E0420"/>
-        <rect x="2"  y="11" width="3"  height="6" rx="1.5" fill="#0E0420" opacity=".35"/>
-        <rect x="20" y="11" width="6"  height="6" rx="1.5" fill="#0E0420" opacity=".35"/>
-        <rect x="2"  y="20" width="11" height="6" rx="1.5" fill="#0E0420" opacity=".7"/>
-        <rect x="15" y="20" width="11" height="6" rx="1.5" fill="#0E0420"/>
-      </svg>
-      <span class="font-display font-semibold text-[28px] leading-none text-brand tracking-tight">Bricklio</span>
-    </a>
-    <div class="text-[11px] text-stone-400 tracking-wide">UK property tools</div>
-  </header>
+    <header>
+      <a href="/" class="logo">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <rect x="2"  y="2"  width="11" height="6" rx="1.5" fill="#0E0420"/>
+          <rect x="15" y="2"  width="11" height="6" rx="1.5" fill="#0E0420" opacity=".55"/>
+          <rect x="7"  y="11" width="11" height="6" rx="1.5" fill="#0E0420"/>
+          <rect x="2"  y="11" width="3"  height="6" rx="1.5" fill="#0E0420" opacity=".35"/>
+          <rect x="20" y="11" width="6"  height="6" rx="1.5" fill="#0E0420" opacity=".35"/>
+          <rect x="2"  y="20" width="11" height="6" rx="1.5" fill="#0E0420" opacity=".7"/>
+          <rect x="15" y="20" width="11" height="6" rx="1.5" fill="#0E0420"/>
+        </svg>
+        <span class="logo-word">Bricklio</span>
+      </a>
+    </header>
 
-  <!-- ─── Hero card ─── -->
-  <div class="hero-card fade-up fade-up-1">
-    <div class="orb1"></div>
-    <div class="orb2"></div>
-    <div class="orb3"></div>
+    <hr class="rule">
 
-    <div class="text-[10px] font-semibold tracking-[1.8px] uppercase mb-3" style="color:rgba(255,255,255,.35)">FREE · NO SIGNUP NEEDED</div>
-    <h1 class="font-display font-semibold leading-tight tracking-tight text-white mb-2" style="font-size:clamp(26px,7vw,32px)">
-      Analyse any UK<br>property deal
-    </h1>
-    <p class="text-[13px] leading-relaxed mb-6" style="color:rgba(255,255,255,.45)">
-      Enter a price, deposit, rate and rent — get cashflow, yield and Section 24 tax impact in seconds.
-    </p>
-    <a href="/yield.html" class="cta-primary">
-      Open the calculator
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-left:8px">
-        <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-  </div>
+    <main>
+      <h1>The BTL calculator<br>that does the tax too.</h1>
 
-  <!-- ─── Tools ─── -->
-  <div class="fade-up fade-up-2">
-    <div class="section-label">All tools</div>
-    <div class="flex flex-col gap-2.5">
+      <p class="body-text">
+        Bricklio calculates cashflow, gross and net yield, mortgage payments and stamp duty for any UK buy-to-let property. Enter a price, deposit, rate and rent — results are instant.
+      </p>
 
-      <!-- Yield calculator -->
-      <a href="/yield.html" class="tool-card">
-        <div class="tool-card-body">
-          <div class="flex items-start justify-between gap-3">
-            <div class="tool-icon icon-brand">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect x="1" y="1" width="7" height="4" rx="1" fill="#0E0420"/>
-                <rect x="10" y="1" width="7" height="4" rx="1" fill="#0E0420" opacity=".45"/>
-                <rect x="4" y="7" width="7" height="4" rx="1" fill="#0E0420"/>
-                <rect x="1" y="7" width="2" height="4" rx="1" fill="#0E0420" opacity=".3"/>
-                <rect x="13" y="7" width="4" height="4" rx="1" fill="#0E0420" opacity=".3"/>
-                <rect x="1" y="13" width="7" height="4" rx="1" fill="#0E0420" opacity=".6"/>
-                <rect x="10" y="13" width="7" height="4" rx="1" fill="#0E0420"/>
-              </svg>
-            </div>
-            <span class="badge badge-free">Free</span>
-          </div>
-          <div class="text-[15px] font-semibold text-brand mb-1">Rental Yield Calculator</div>
-          <p class="text-[12px] text-stone-400 leading-relaxed">
-            Cashflow, gross & net yield, SDLT, mortgage type comparison. Instant results as you type.
-          </p>
-        </div>
-        <div class="tool-card-footer">
-          <div class="flex gap-1.5">
-            <span class="stat-pill">Cashflow</span>
-            <span class="stat-pill">Yield</span>
-            <span class="stat-pill">SDLT</span>
-          </div>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:rgba(14,4,32,.3);flex-shrink:0">
-            <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+      <p class="body-text">
+        What it does that other calculators don't: <strong>Section 24 tax analysis.</strong> Enter your income and see your real after-tax cashflow, with HMRC-accurate modelling of the mortgage interest restriction. No spreadsheet required.
+      </p>
+
+      <a href="/yield" class="cta">
+        Open the calculator
+        <svg class="cta-arrow" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </a>
 
-      <!-- Section 24 -->
-      <a href="/section24.html" class="tool-card">
-        <div class="tool-card-body">
-          <div class="flex items-start justify-between gap-3">
-            <div class="tool-icon icon-amber">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <circle cx="9" cy="9" r="7.25" stroke="#B45309" stroke-width="1.5"/>
-                <path d="M9 5.5v4M9 11.5v.5" stroke="#B45309" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="badge badge-free">Free</span>
-          </div>
-          <div class="text-[15px] font-semibold text-brand mb-1">Section 24 Tax Analysis</div>
-          <p class="text-[12px] text-stone-400 leading-relaxed">
-            See your real after-tax cashflow. S24 restricts mortgage interest relief — find out exactly what it costs you.
-          </p>
-        </div>
-        <div class="tool-card-footer">
-          <div class="flex gap-1.5">
-            <span class="stat-pill">After-tax cashflow</span>
-            <span class="stat-pill">S24 cost/mo</span>
-          </div>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:rgba(14,4,32,.3);flex-shrink:0">
-            <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </a>
+      <div class="feature-rule">
+        <div class="feature-rule-line"></div>
+        <div class="feature-rule-label">What's included</div>
+        <div class="feature-rule-line"></div>
+      </div>
 
-      <!-- Stress test -->
-      <a href="/stress.html" class="tool-card">
-        <div class="tool-card-body">
-          <div class="flex items-start justify-between gap-3">
-            <div class="tool-icon icon-green">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M2 15L7.5 5.5L13 15" stroke="#057A3A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M3.5 12h11" stroke="#057A3A" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="badge badge-free">Free</span>
-          </div>
-          <div class="text-[15px] font-semibold text-brand mb-1">Stress Test</div>
-          <p class="text-[12px] text-stone-400 leading-relaxed">
-            Drag sliders to see how cashflow changes as rates rise or rent falls. Find your break-even rate.
-          </p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-name">Yield & cashflow</div>
+          <div class="feature-desc">Gross yield, net yield, monthly and annual cashflow. Interest-only or repayment.</div>
         </div>
-        <div class="tool-card-footer">
-          <div class="flex gap-1.5">
-            <span class="stat-pill">Rate scenarios</span>
-            <span class="stat-pill">Break-even</span>
-          </div>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:rgba(14,4,32,.3);flex-shrink:0">
-            <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <div class="feature">
+          <div class="feature-name">Stamp duty</div>
+          <div class="feature-desc">BTL rates calculated automatically, including the April 2025 changes.</div>
         </div>
-      </a>
-
-    </div>
-  </div>
-
-  <!-- ─── How it works ─── -->
-  <div class="bg-white rounded-2xl border border-cream-dark px-5 pt-5 pb-5 shadow-sm fade-up fade-up-3">
-    <div class="section-label">How it works</div>
-    <div class="flex flex-col gap-4">
-      <div class="flex items-start gap-3.5">
-        <div class="w-6 h-6 rounded-full bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
-          <span class="text-[10px] font-bold text-white">1</span>
+        <div class="feature">
+          <div class="feature-name">Section 24 tax</div>
+          <div class="feature-desc">After-tax cashflow with full band slicing and Personal Allowance taper. Basic, higher and additional rate.</div>
         </div>
-        <div>
-          <div class="text-[13px] font-semibold text-brand mb-0.5">Enter property details</div>
-          <p class="text-[12px] text-stone-400 leading-relaxed">Price, deposit, interest rate, rent and costs. Takes about 30 seconds.</p>
+        <div class="feature">
+          <div class="feature-name">Stress test</div>
+          <div class="feature-desc">See how the deal holds up if rates rise or rent falls. Finds your break-even rate.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-name">Save deals</div>
+          <div class="feature-desc">Free account lets you save and compare multiple properties.</div>
         </div>
       </div>
-      <div class="flex items-start gap-3.5">
-        <div class="w-6 h-6 rounded-full bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
-          <span class="text-[10px] font-bold text-white">2</span>
-        </div>
-        <div>
-          <div class="text-[13px] font-semibold text-brand mb-0.5">See cashflow and yield instantly</div>
-          <p class="text-[12px] text-stone-400 leading-relaxed">Pre-tax monthly cashflow, gross and net yield, annual figures.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-3.5">
-        <div class="w-6 h-6 rounded-full bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
-          <span class="text-[10px] font-bold text-white">3</span>
-        </div>
-        <div>
-          <div class="text-[13px] font-semibold text-brand mb-0.5">Add tax and stress testing</div>
-          <p class="text-[12px] text-stone-400 leading-relaxed">Layer in your S24 impact and test how the deal holds up if rates rise.</p>
-        </div>
-      </div>
-    </div>
+
+    </main>
+
+    <footer>
+      <p class="footer-text">
+        For UK property investors · Results are estimates, not financial advice.<br>
+        Always verify with a qualified accountant.
+      </p>
+    </footer>
+
   </div>
 
-  <!-- ─── Footer ─── -->
-  <div class="pb-4 fade-up fade-up-4">
-    <p class="text-center text-[10px] text-stone-400 leading-relaxed">
-      For UK property investors · Figures are estimates only, not financial advice.<br>
-      Always verify with a qualified accountant.
-    </p>
-  </div>
-
-</div>
 </body>
 </html>
